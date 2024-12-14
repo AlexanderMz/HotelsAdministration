@@ -1,12 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using HotelsAdministration.Application.Repositories;
-using HotelsAdministration.Domain.Models;
-using Microsoft.Extensions.Logging;
 using HotelsAdministration.Application.Interfaces;
+using HotelsAdministration.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HotelsAdministration.WebApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class HotelsController : ControllerBase

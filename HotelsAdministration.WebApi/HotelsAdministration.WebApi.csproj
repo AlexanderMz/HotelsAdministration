@@ -28,6 +28,7 @@
     <ItemGroup>
       <ProjectReference Include="..\HotelsAdministration.Application\HotelsAdministration.Application.csproj" />
       <ProjectReference Include="..\HotelsAdministration.Domain\HotelsAdministration.Domain.csproj" />
+      <ProjectReference Include="..\HotelsAdministration.Infrastructure\HotelsAdministration.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

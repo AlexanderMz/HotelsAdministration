@@ -11,24 +11,16 @@ namespace HotelsAdministration.WebApi.Controllers;
 [Route("api/[controller]")]
 public class HotelReservationsController : ControllerBase
 {
-    private readonly IMongoCollection<Hotel> _hotelsCollection;
-    private readonly IMongoCollection<Reservation> _reservationsCollection;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailService _emailService;
     private readonly ILogger<HotelReservationsController> _logger;
 
-    /// <summary>
-    /// Initializes a new instance of the HotelReservationsController
-    /// </summary>
-    /// <param name="database">MongoDB database instance</param>
-    /// <param name="emailService">Email service for notifications</param>
-    /// <param name="logger">Logger instance</param>
     public HotelReservationsController(
-        IMongoDatabase database,
+        IUnitOfWork unitOfWork,
         IEmailService emailService,
         ILogger<HotelReservationsController> logger)
     {
-        _hotelsCollection = database.GetCollection<Hotel>("hotels");
-        _reservationsCollection = database.GetCollection<Reservation>("reservations");
+        _unitOfWork = unitOfWork;
         _emailService = emailService;
         _logger = logger;
     }
@@ -47,15 +39,7 @@ public class HotelReservationsController : ControllerBase
     {
         try
         {
-            var filter = Builders<Hotel>.Filter.And(
-                Builders<Hotel>.Filter.Eq(h => h.City, searchDto.City),
-                Builders<Hotel>.Filter.ElemMatch(h => h.Rooms,
-                    r => r.Capacity >= searchDto.GuestsCount && r.IsAvailable)
-            );
-
-            var hotels = await _hotelsCollection
-                .Find(filter)
-                .ToListAsync();
+            var hotels = await _unitOfWork.HotelReservations.SearchHotelsAsync(searchDto);
 
             return Ok(hotels);
         }
@@ -84,9 +68,7 @@ public class HotelReservationsController : ControllerBase
     {
         try
         {
-            var hotel = await _hotelsCollection
-                .Find(h => h.Id == reservationDto.HotelId)
-                .FirstOrDefaultAsync();
+            var hotel = await _unitOfWork.Hotels.GetByIdAsync(reservationDto.HotelId);
 
             if (hotel == null)
             {
@@ -121,7 +103,7 @@ public class HotelReservationsController : ControllerBase
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _reservationsCollection.InsertOneAsync(reservation);
+            await _unitOfWork.HotelReservations.CreateReservationAsync(reservation);
             await _emailService.SendReservationConfirmationAsync(reservation, hotel);
 
             return CreatedAtAction(
@@ -152,9 +134,7 @@ public class HotelReservationsController : ControllerBase
     {
         try
         {
-            var reservation = await _reservationsCollection
-                .Find(r => r.Id == id)
-                .FirstOrDefaultAsync();
+            var reservation = await _unitOfWork.HotelReservations.GetReservationByIdAsync(id);
 
             if (reservation == null)
             {

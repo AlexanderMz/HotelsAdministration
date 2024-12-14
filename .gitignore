@@ -8,3 +8,4 @@ riderModule.iml
 /.idea/.idea.HotelsAdministration/.idea
 /HotelsAdministration.Application/Configuration/MongoDbSettings.cs
 /HotelsAdministration.WebApi/.vscode
+/.vs/ProjectEvaluation

@@ -1,38 +1,23 @@
-using HotelsAdministration.Application.Interfaces;
-using HotelsAdministration.Application.UnitOfWork;
-using HotelsAdministration.Application.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
 using HotelsAdministration.Application.Configuration;
-using HotelsAdministration.Application.Repositories;
+using HotelsAdministration.Application.Interfaces;
+using HotelsAdministration.Application.Services;
+using HotelsAdministration.Infrastructure.Repositories;
+using HotelsAdministration.Infrastructure.UnitOfWork;
+using HotelsAdministration.WebApi.Extension;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.Configure<MongoDbSettings>(
-    builder.Configuration.GetSection("MongoDbSettings"));
-using var loggerFactory = LoggerFactory.Create(b =>
-{
-    b.AddSimpleConsole();
-    b.SetMinimumLevel(LogLevel.Debug);
-});
-builder.Services.AddSingleton<IMongoDatabase>(sp =>
-{
-    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-
-    var client = new MongoClient(settings.ConnectionString);
-    client.Settings.LoggingSettings = new MongoDB.Driver.Core.Configuration.LoggingSettings(loggerFactory);
-    return client.GetDatabase(settings.DatabaseName);
-});
-builder.Services.AddScoped<IHotelRepository, HotelRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.Persistence(builder.Configuration);
+builder.Services.Services(builder.Configuration);
 
 // Configuración de autenticación JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

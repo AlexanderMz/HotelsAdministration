@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using System.ComponentModel.DataAnnotations;
 using HotelsAdministration.Domain.Models;
 using HotelsAdministration.Domain.Models.DTOs;
+using HotelsAdministration.Application.Interfaces;
 
 namespace HotelsAdministration.WebApi.Controllers;
 
@@ -12,14 +13,14 @@ namespace HotelsAdministration.WebApi.Controllers;
 [Route("api/[controller]")]
 public class TravelersController : ControllerBase
 {
-    private readonly IMongoCollection<Traveler> _travelersCollection;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<TravelersController> _logger;
 
     public TravelersController(
-        IMongoDatabase database,
+        IUnitOfWork unitOfWork,
         ILogger<TravelersController> logger)
     {
-        _travelersCollection = database.GetCollection<Traveler>("travelers");
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
@@ -51,7 +52,7 @@ public class TravelersController : ControllerBase
                 EmergencyContact = travelerDto.EmergencyContact
             };
 
-            await _travelersCollection.InsertOneAsync(traveler);
+            await _unitOfWork.Travelers.CreateTravelerAsync(traveler);
             _logger.LogInformation("Traveler created successfully: {TravelerId}", traveler.Id);
 
             return CreatedAtAction(
@@ -82,9 +83,7 @@ public class TravelersController : ControllerBase
     {
         try
         {
-            var traveler = await _travelersCollection
-                .Find(t => t.Id == id)
-                .FirstOrDefaultAsync();
+            var traveler = await _unitOfWork.Travelers.GetTravelerByIdAsync(id);                
 
             if (traveler == null)
             {

@@ -5,7 +5,7 @@ using HotelsAdministration.Application.Interfaces;
 using HotelsAdministration.Domain.Models;
 
 
-namespace HotelsAdministration.Application.Repositories;
+namespace HotelsAdministration.Infrastructure.Repositories;
 
 public class HotelRepository(IMongoDatabase database, IOptions<MongoDbSettings> settings)
     : IHotelRepository
