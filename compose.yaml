@@ -1,0 +1,6 @@
+﻿services:
+  hotelsadministration.webapi.server:
+    image: hotelsadministration.webapi.server
+    build:
+      context: .
+      dockerfile: HotelsAdministration.WebApi.Server/Dockerfile
