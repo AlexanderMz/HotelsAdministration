@@ -48,8 +48,7 @@ public class TravelersController : ControllerBase
                 DocumentType = travelerDto.DocumentType,
                 DocumentNumber = travelerDto.DocumentNumber,
                 Email = travelerDto.Email,
-                ContactPhone = travelerDto.ContactPhone,
-                EmergencyContact = travelerDto.EmergencyContact
+                ContactPhone = travelerDto.ContactPhone
             };
 
             await _unitOfWork.Travelers.CreateTravelerAsync(traveler);
@@ -83,7 +82,7 @@ public class TravelersController : ControllerBase
     {
         try
         {
-            var traveler = await _unitOfWork.Travelers.GetTravelerByIdAsync(id);                
+            var traveler = await _unitOfWork.Travelers.GetTravelerByIdAsync(id);
 
             if (traveler == null)
             {

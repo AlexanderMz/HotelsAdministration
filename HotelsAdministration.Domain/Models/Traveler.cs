@@ -36,4 +36,7 @@ public class Traveler
 
     [Required]
     public EmergencyContact EmergencyContact { get; set; }
+
+    [BsonElement("createdAt")]
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

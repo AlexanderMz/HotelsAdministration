@@ -15,5 +15,6 @@ public static class ServicesExtension
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IHotelReservationRepository, HotelReservationRepository>();
         services.AddScoped<ITravelerRepository, TravelerRepository>();
+        services.AddScoped<IEmailService, EmailService>();
     }
 }

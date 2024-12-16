@@ -4,6 +4,7 @@ using HotelsAdministration.Domain.Models;
 using HotelsAdministration.Domain.Models.DTOs;
 using HotelsAdministration.Domain.Models.Enums;
 using HotelsAdministration.Application.Interfaces;
+using AutoMapper;
 
 namespace HotelsAdministration.WebApi.Controllers;
 
@@ -14,15 +15,18 @@ public class HotelReservationsController : ControllerBase
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailService _emailService;
     private readonly ILogger<HotelReservationsController> _logger;
+    private readonly IMapper _mapper;
 
     public HotelReservationsController(
         IUnitOfWork unitOfWork,
         IEmailService emailService,
-        ILogger<HotelReservationsController> logger)
+        ILogger<HotelReservationsController> logger, 
+        IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _emailService = emailService;
         _logger = logger;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -53,21 +57,23 @@ public class HotelReservationsController : ControllerBase
     /// <summary>
     /// Creates a new hotel reservation
     /// </summary>
+    /// <param name="travelerId">the unique identifier of the traveler</param>
     /// <param name="reservationDto">Reservation details including hotel, room, and guest information</param>
     /// <returns>The created reservation details</returns>
     /// <response code="201">Returns the newly created reservation</response>
     /// <response code="400">If the room is not available</response>
     /// <response code="404">If the hotel was not found</response>
     /// <response code="500">If there was an internal error during reservation creation</response>
-    [HttpPost("reserve")]
+    [HttpPost("reserve/{travelerId}")]
     [ProducesResponseType(typeof(Reservation), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Reservation>> CreateReservation(CreateReservationDto reservationDto)
+    public async Task<ActionResult<Reservation>> CreateReservation(string travelerId, [FromBody] CreateReservationDto reservationDto)
     {
         try
         {
+            var traveler = await _unitOfWork.Travelers.GetTravelerByIdAsync(travelerId);
             var hotel = await _unitOfWork.Hotels.GetByIdAsync(reservationDto.HotelId);
 
             if (hotel == null)
@@ -75,36 +81,19 @@ public class HotelReservationsController : ControllerBase
                 return NotFound("Hotel not found");
             }
 
-            var room = hotel.Rooms.FirstOrDefault(r => r.Id == reservationDto.RoomId);
+            var room = hotel.Rooms.FirstOrDefault(r => r.RoomNumber == reservationDto.RoomNumber);
             if (room == null || !room.IsAvailable)
             {
                 return BadRequest("Room not available");
             }
 
-            var reservation = new Reservation
-            {
-                HotelId = reservationDto.HotelId,
-                RoomId = reservationDto.RoomId,
-                CheckInDate = reservationDto.CheckInDate,
-                CheckOutDate = reservationDto.CheckOutDate,
-                Guests = reservationDto.Guests.Select(g => new Traveler
-                {
-                    FullName = g.FullName,
-                    BirthDate = g.BirthDate,
-                    Gender = g.Gender,
-                    DocumentType = g.DocumentType,
-                    DocumentNumber = g.DocumentNumber,
-                    Email = g.Email,
-                    ContactPhone = g.ContactPhone,
-                    EmergencyContact = g.EmergencyContact
-                }).ToList(),
-                TotalPrice = CalculateTotalPrice(room.PricePerNight, reservationDto.CheckInDate, reservationDto.CheckOutDate),
-                Status = ReservationStatus.Confirmed,
-                CreatedAt = DateTime.UtcNow
-            };
+            var reservation = _mapper.Map<Reservation>(reservationDto);
+            reservation.TotalPrice = CalculateTotalPrice(room.PricePerNight, reservationDto.CheckInDate, reservationDto.CheckOutDate);
+            reservation.Status = ReservationStatus.Confirmed;
+            reservation.TravelerId = travelerId;
 
             await _unitOfWork.HotelReservations.CreateReservationAsync(reservation);
-            await _emailService.SendReservationConfirmationAsync(reservation, hotel);
+            //await _emailService.SendReservationConfirmationAsync(reservation, hotel, traveler);
 
             return CreatedAtAction(
                 nameof(GetReservationById),

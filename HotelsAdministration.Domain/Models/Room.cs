@@ -6,9 +6,6 @@ namespace HotelsAdministration.Domain.Models;
 
 public class Room
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; }
 
     [BsonElement("roomNumber")]
     public string RoomNumber { get; set; }
@@ -19,6 +16,10 @@ public class Room
     [BsonElement("pricePerNight")]
     [BsonRepresentation(BsonType.Decimal128)]
     public decimal PricePerNight { get; set; }
+
+    [BsonElement("taxes")]
+    [BsonRepresentation(BsonType.Decimal128)]
+    public decimal Taxes { get; set; }
 
     [BsonElement("capacity")]
     public int Capacity { get; set; }

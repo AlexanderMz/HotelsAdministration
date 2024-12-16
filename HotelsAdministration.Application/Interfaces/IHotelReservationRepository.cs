@@ -9,5 +9,4 @@ public interface IHotelReservationRepository
     Task<Hotel> GetHotelByIdAsync(string id);
     Task<Reservation> CreateReservationAsync(Reservation reservation);
     Task<Reservation> GetReservationByIdAsync(string id);
-    Task<bool> UpdateReservationStatusAsync(string id, ReservationStatus status);
 }

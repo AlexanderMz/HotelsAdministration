@@ -22,7 +22,7 @@ public class Hotel
     [BsonElement("isActive")]
     public bool IsActive { get; set; } = true;
 
-    [BsonElement("rooms")]
+    [BsonElement("rooms")]    
     public List<Room> Rooms { get; set; } = new List<Room>();
 
     [BsonElement("createdAt")]
@@ -30,4 +30,14 @@ public class Hotel
 
     [BsonElement("updatedAt")]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+}
+
+
+public class UpdateHotelDto
+{
+    public string Name { get; set; }
+    public string City { get; set; }
+    public string Address { get; set; }
+    public string Description { get; set; }
+    public bool IsActive { get; set; }
 }

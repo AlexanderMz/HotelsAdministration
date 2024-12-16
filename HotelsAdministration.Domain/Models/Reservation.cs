@@ -17,13 +17,16 @@ public class Reservation
     public string HotelId { get; set; }
 
     [Required]
-    public string RoomId { get; set; }
+    public string RoomNumber { get; set; }
 
     [Required]
     public DateTime CheckInDate { get; set; }
 
     [Required]
     public DateTime CheckOutDate { get; set; }
+
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string TravelerId { get; set; }
 
     [Required]
     public List<Traveler> Guests { get; set; }
@@ -33,4 +36,6 @@ public class Reservation
 
     public ReservationStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public EmergencyContact EmergencyContact { get; set; }
 }

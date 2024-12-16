@@ -59,4 +59,12 @@ public class HotelRepository(IMongoDatabase database, IOptions<MongoDbSettings> 
             update);
         return result.ModifiedCount > 0;
     }
+
+    public async Task<bool> AddRoomAsync(string hotelId, Room room)
+    {
+        var filter = Builders<Hotel>.Filter.Eq(h => h.Id, hotelId);
+        var update = Builders<Hotel>.Update.Push(h => h.Rooms, room);
+        var result = await _hotels.UpdateOneAsync(filter, update);
+        return result.ModifiedCount > 0;
+    }
 }

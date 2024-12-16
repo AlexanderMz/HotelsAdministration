@@ -1,14 +1,8 @@
-using HotelsAdministration.Application.Configuration;
-using HotelsAdministration.Application.Interfaces;
-using HotelsAdministration.Application.Services;
-using HotelsAdministration.Infrastructure.Repositories;
-using HotelsAdministration.Infrastructure.UnitOfWork;
+using HotelsAdministration.Application.Mappings;
 using HotelsAdministration.WebApi.Extension;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
 using System.Reflection;
 using System.Text;
 
@@ -78,6 +72,8 @@ builder.Services.AddSwaggerGen(options =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
 

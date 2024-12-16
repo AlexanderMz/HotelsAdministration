@@ -41,12 +41,5 @@ namespace HotelsAdministration.Infrastructure.Repositories
         {
             return await _reservationsCollection.Find(r => r.Id == id).FirstOrDefaultAsync();
         }
-
-        public async Task<bool> UpdateReservationStatusAsync(string id, ReservationStatus status)
-        {
-            var update = Builders<Reservation>.Update.Set(r => r.Status, status);
-            var result = await _reservationsCollection.UpdateOneAsync(r => r.Id == id, update);
-            return result.ModifiedCount > 0;
-        }
     }
 }

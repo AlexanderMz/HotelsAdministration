@@ -29,6 +29,4 @@ public class CreateTravelerDto
     [Phone]
     public string ContactPhone { get; set; }
 
-    [Required]
-    public EmergencyContact EmergencyContact { get; set; }
 }

@@ -1,3 +1,5 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +12,7 @@ public class CreateReservationDto
     public string HotelId { get; set; }
 
     [Required]
-    public string RoomId { get; set; }
+    public string RoomNumber { get; set; }
 
     [Required]
     public DateTime CheckInDate { get; set; }
@@ -20,4 +22,7 @@ public class CreateReservationDto
 
     [Required]
     public List<CreateTravelerDto> Guests { get; set; }
+
+    [Required]
+    public EmergencyContact EmergencyContact { get; set; }
 }

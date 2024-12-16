@@ -3,5 +3,5 @@ namespace HotelsAdministration.Application.Interfaces;
 
 public interface IEmailService
 {
-    Task SendReservationConfirmationAsync(Reservation reservation, Hotel hotel);
+    Task SendReservationConfirmationAsync(Reservation reservation, Hotel hotel, Traveler traveler);
 }

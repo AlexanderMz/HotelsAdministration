@@ -12,4 +12,5 @@ public interface IHotelRepository
     Task<bool> ToggleHotelStatusAsync(string id, bool status);
     Task<bool> ToggleRoomStatusAsync(string hotelId, string roomNumber, bool status);
     Task<bool> UpdateRoomAsync(string hotelId, Room room);
+    Task<bool> AddRoomAsync(string hotelId, Room room);
 }

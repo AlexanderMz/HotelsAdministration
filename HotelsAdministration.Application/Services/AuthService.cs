@@ -26,7 +26,7 @@ public class AuthService : IAuthService
     {
         var client = new MongoClient(settings.Value.ConnectionString);
         var database = client.GetDatabase(settings.Value.DatabaseName);
-        _agents = database.GetCollection<TravelAgent>("TravelAgents");
+        _agents = database.GetCollection<TravelAgent>(settings.Value.TravelerCollectionName);
         _configuration = configuration;
     }
 
