@@ -82,19 +82,16 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotels Administration API V1");
-        options.RoutePrefix = "swagger";
-        options.DocumentTitle = "Hotels Administration API Documentation";
-        options.DefaultModelsExpandDepth(2);
-        options.EnableDeepLinking();
-        options.DisplayRequestDuration();
-    });
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotels Administration API V1");
+    options.RoutePrefix = "swagger";
+    options.DocumentTitle = "Hotels Administration API Documentation";
+    options.DefaultModelsExpandDepth(2);
+    options.EnableDeepLinking();
+    options.DisplayRequestDuration();
+});
 
 app.MapControllers();
 
