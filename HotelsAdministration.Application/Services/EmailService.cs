@@ -26,7 +26,7 @@ public class EmailService : IEmailService
         _smtpServer = configuration["Email:SmtpServer"];
         _smtpPort = int.Parse(configuration["Email:SmtpPort"]);
         _smtpUsername = configuration["Email:Username"];
-        _smtpPassword = configuration["Email:Password"];
+        _smtpPassword = Environment.GetEnvironmentVariable("sendgrid");
         _fromEmail = configuration["Email:FromEmail"];
     }
 
